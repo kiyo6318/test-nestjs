@@ -3,35 +3,38 @@ import { CreateFamilyDto } from './dto/create-family.dto';
 import { FamilyStatus } from './family-status.enum';
 import { Family } from '../entities/family.entity';
 import { FamilyRepository } from './family.repository';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class FamiliesService {
   constructor(private readonly familyRepository: FamilyRepository) {}
   private families: Family[] = [];
 
-  findAll(): Family[] {
-    return this.families;
+  async findAll(): Promise<Family[]> {
+    return await this.familyRepository.find();
   }
 
-  findById(id: string): Family {
-    const found = this.families.find((family) => family.id === id);
+  async findById(id: string): Promise<Family> {
+    const found = await this.familyRepository.findOne(id);
     if (!found) {
       throw new NotFoundException();
     }
     return found;
   }
 
-  async create(createFamilyDto: CreateFamilyDto): Promise<Family> {
-    return await this.familyRepository.createFamily(createFamilyDto);
+  async create(createFamilyDto: CreateFamilyDto, user: User): Promise<Family> {
+    return await this.familyRepository.createFamily(createFamilyDto, user);
   }
 
-  updateStatus(id: string): Family {
-    const family = this.findById(id);
+  async updateStatus(id: string): Promise<Family> {
+    const family = await this.findById(id);
     family.status = FamilyStatus.INACTIVE;
+    family.updatedAt = new Date().toISOString();
+    await this.familyRepository.save(family);
     return family;
   }
 
-  delete(id: string): void {
-    this.families = this.families.filter((family) => family.id != id);
+  async delete(id: string): Promise<void> {
+    await this.familyRepository.delete({ id });
   }
 }

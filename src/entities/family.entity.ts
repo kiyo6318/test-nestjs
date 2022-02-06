@@ -1,5 +1,6 @@
 import { FamilyStatus } from 'src/families/family-status.enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class Family {
@@ -35,4 +36,7 @@ export class Family {
 
   @Column()
   updatedAt: string;
+
+  @OneToMany(() => User, (user) => user.family)
+  parents: User[];
 }

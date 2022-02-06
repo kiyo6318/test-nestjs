@@ -7,37 +7,45 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { FamiliesService } from './families.service';
 import { Family } from '../entities/family.entity';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { GetUser } from 'src/auth/decorater/get-user.decorater';
+import { User } from 'src/entities/user.entity';
 
 @Controller('families')
+@UseGuards(JwtAuthGuard)
 export class FamiliesController {
   constructor(private readonly familiesService: FamiliesService) {}
 
   @Get()
-  findAll(): Family[] {
-    return this.familiesService.findAll();
+  async findAll(): Promise<Family[]> {
+    return await this.familiesService.findAll();
   }
 
   @Get(':id') //families/id
-  findById(@Param('id', ParseUUIDPipe) id: string): Family {
-    return this.familiesService.findById(id);
+  async findById(@Param('id', ParseUUIDPipe) id: string): Promise<Family> {
+    return await this.familiesService.findById(id);
   }
 
   @Post()
-  async create(@Body() createFamilyDto: CreateFamilyDto): Promise<Family> {
-    return await this.familiesService.create(createFamilyDto);
+  async create(
+    @Body() createFamilyDto: CreateFamilyDto,
+    @GetUser() user: User,
+  ): Promise<Family> {
+    return await this.familiesService.create(createFamilyDto, user);
   }
 
   @Patch(':id')
-  updateStatus(@Param('id', ParseUUIDPipe) id: string): Family {
-    return this.familiesService.updateStatus(id);
+  async updateStatus(@Param('id', ParseUUIDPipe) id: string): Promise<Family> {
+    return await this.familiesService.updateStatus(id);
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseUUIDPipe) id: string): void {
-    this.familiesService.delete(id);
+  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+    return await this.familiesService.delete(id);
   }
 }
