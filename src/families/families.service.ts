@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { FamilyStatus } from './family-status.enum';
-import { Family } from './family.model';
-import { v4 as uuid } from 'uuid';
+import { Family } from '../entities/family.entity';
+import { FamilyRepository } from './family.repository';
 
 @Injectable()
 export class FamiliesService {
+  constructor(private readonly familyRepository: FamilyRepository) {}
   private families: Family[] = [];
 
   findAll(): Family[] {
@@ -20,14 +21,8 @@ export class FamiliesService {
     return found;
   }
 
-  create(createFamilyDto: CreateFamilyDto): Family {
-    const family: Family = {
-      id: uuid(),
-      ...createFamilyDto,
-      status: FamilyStatus.ACTIVE,
-    };
-    this.families.push(family);
-    return family;
+  async create(createFamilyDto: CreateFamilyDto): Promise<Family> {
+    return await this.familyRepository.createFamily(createFamilyDto);
   }
 
   updateStatus(id: string): Family {

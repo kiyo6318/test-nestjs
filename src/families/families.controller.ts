@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { FamiliesService } from './families.service';
-import { Family } from './family.model';
+import { Family } from '../entities/family.entity';
 
 @Controller('families')
 export class FamiliesController {
@@ -27,8 +27,8 @@ export class FamiliesController {
   }
 
   @Post()
-  create(@Body() createFamilyDto: CreateFamilyDto): Family {
-    return this.familiesService.create(createFamilyDto);
+  async create(@Body() createFamilyDto: CreateFamilyDto): Promise<Family> {
+    return await this.familiesService.create(createFamilyDto);
   }
 
   @Patch(':id')
