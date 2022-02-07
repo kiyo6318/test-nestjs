@@ -1,20 +1,14 @@
-import { UserStatus } from 'src/auth/user-status.enum';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Family } from './family.entity';
+import { Parent } from './parent.entity';
 
 @Entity()
-export class User {
+export class ChildMemo {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
-  email: string;
-
   @Column()
-  password: string;
-
-  @Column()
-  status: UserStatus;
+  text: string;
 
   @Column()
   createdAt: string;
@@ -22,6 +16,9 @@ export class User {
   @Column()
   updatedAt: string;
 
-  @ManyToOne(() => Family, (family) => family.parents)
-  family?: Family[];
+  @ManyToOne(() => Parent, (parent) => parent.childMemos)
+  writer: Parent;
+
+  @ManyToOne(() => Family, (family) => family.childMemos)
+  family: Family;
 }

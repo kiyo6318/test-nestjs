@@ -3,7 +3,6 @@ import { CreateFamilyDto } from './dto/create-family.dto';
 import { FamilyStatus } from './family-status.enum';
 import { Family } from '../entities/family.entity';
 import { FamilyRepository } from './family.repository';
-import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class FamiliesService {
@@ -22,8 +21,8 @@ export class FamiliesService {
     return found;
   }
 
-  async create(createFamilyDto: CreateFamilyDto, user: User): Promise<Family> {
-    return await this.familyRepository.createFamily(createFamilyDto, user);
+  async create(createFamilyDto: CreateFamilyDto): Promise<Family> {
+    return await this.familyRepository.createFamily(createFamilyDto);
   }
 
   async updateStatus(id: string): Promise<Family> {

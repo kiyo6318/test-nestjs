@@ -19,20 +19,4 @@ export class CreateFamilyDto {
   @Max(31)
   @Type(() => Number)
   possibleDateSelectDay: number;
-
-  @IsUUID()
-  @IsNotEmpty()
-  cohabitParentId: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  separateParentId: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  supporterId: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  supportOrganizationId: string;
 }
