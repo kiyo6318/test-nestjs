@@ -6,6 +6,7 @@ import { OrganizationRepository } from 'src/organizations/organization.repositor
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 import { JwtStrategy } from './jwt.strategy';
 import { SupporterRepository } from './supporter.repository';
 import { UserRepository } from './user.repository';
@@ -26,7 +27,7 @@ import { UserRepository } from './user.repository';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard],
-  exports: [JwtStrategy, JwtAuthGuard],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
+  exports: [JwtStrategy, JwtAuthGuard, RolesGuard],
 })
 export class AuthModule {}

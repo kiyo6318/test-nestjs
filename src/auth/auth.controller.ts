@@ -9,10 +9,13 @@ import {
 import { Supporter } from 'src/entities/supporter.entity';
 import { CreateOrganizationDto } from 'src/organizations/dto/create-organization.dto';
 import { AuthService } from './auth.service';
-import { GetSupporter } from './decorater/get-supporter.decorater';
+import { GetUser } from './decorater/get-user.decorater';
+import { Role } from './decorater/role.decorater';
 import { CreateSupporterDto } from './dto/createSupporter.dto';
 import { CredentialsDto } from './dto/credentials.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { SupporterStatus } from './supporter-status.enum';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -31,15 +34,13 @@ export class AuthController {
   }
 
   @Post('supporters')
-  @UseGuards(JwtAuthGuard)
+  @Role(SupporterStatus.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async addSupporter(
     @Body() createSupporterDto: CreateSupporterDto,
-    @GetSupporter() supporter: Supporter,
+    @GetUser() supporter: Supporter,
   ): Promise<Supporter> {
-    return await this.authService.addSupporter(
-      createSupporterDto,
-      supporter.organization,
-    );
+    return await this.authService.addSupporter(createSupporterDto, supporter);
   }
 
   @Post('signin')
