@@ -33,7 +33,7 @@ export class FamiliesController {
 
   @Post()
   async create(@Body() createFamilyDto: CreateFamilyDto): Promise<Family> {
-    return await this.familiesService.create(createFamilyDto);
+    return await this.familiesService.createFamily(createFamilyDto);
   }
 
   @Patch(':id')

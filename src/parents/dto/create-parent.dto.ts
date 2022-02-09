@@ -1,12 +1,10 @@
 import {
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { ParentStatus } from 'src/auth/parent-status.enum';
 
 export class CreateParentDto {
   @IsEmail()
@@ -17,9 +15,6 @@ export class CreateParentDto {
   @MinLength(1)
   @MaxLength(32)
   parent_name: string;
-
-  @IsEnum(ParentStatus)
-  status: ParentStatus;
 
   @IsString()
   @MinLength(8)

@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { SupporterStatus } from 'src/auth/supporter-status.enum';
+import { SupporterStatus } from 'src/supporters/supporter-status.enum';
 import {
   Column,
   Entity,

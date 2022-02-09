@@ -26,7 +26,9 @@ export class OrganizationsController {
   async create(
     @Body() createOrganizationDto: CreateOrganizationDto,
   ): Promise<Organization> {
-    return await this.organizationsService.create(createOrganizationDto);
+    return await this.organizationsService.createOrganization(
+      createOrganizationDto,
+    );
   }
 
   @Delete(':id')

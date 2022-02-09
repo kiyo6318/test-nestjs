@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Supporter } from 'src/entities/supporter.entity';
 import { User } from 'src/entities/user.entity';
-import { SupporterStatus } from './supporter-status.enum';
-import { SupporterRepository } from './supporter.repository';
+import { SupporterStatus } from '../supporters/supporter-status.enum';
+import { SupporterRepository } from '../supporters/supporter.repository';
 import { UserStatus } from './user-status.enum';
 import { UserRepository } from './user.repository';
 

@@ -1,70 +1,87 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CredentialsDto } from './dto/credentials.dto';
-import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcrypt';
-import { OrganizationRepository } from 'src/organizations/organization.repository';
-import { SupporterRepository } from './supporter.repository';
+import { SupporterRepository } from '../supporters/supporter.repository';
 import { CreateOrganizationDto } from 'src/organizations/dto/create-organization.dto';
-import { CreateSupporterDto } from './dto/createSupporter.dto';
+import { CreateSupporterDto } from '../supporters/dto/createSupporter.dto';
 import { Supporter } from 'src/entities/supporter.entity';
 import { CreateFamilyDto } from 'src/families/dto/create-family.dto';
 import { CreateParentDto } from 'src/parents/dto/create-parent.dto';
 import { Family } from 'src/entities/family.entity';
-import { FamilyRepository } from 'src/families/family.repository';
-import { ParentRepository } from 'src/parents/parent.repository';
+import { SupportersService } from 'src/supporters/supporters.service';
+import { OrganizationsService } from 'src/organizations/organizations.service';
+import { FamiliesService } from 'src/families/families.service';
+import { ParentsService } from 'src/parents/parents.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userRepository: UserRepository,
-    private familyRepository: FamilyRepository,
-    private parentRepository: ParentRepository,
-    private supporterRepository: SupporterRepository,
-    private organizationRepository: OrganizationRepository,
+    private familiesService: FamiliesService,
+    private parentsService: ParentsService,
+    private supportersService: SupportersService,
+    private organizationsService: OrganizationsService,
     private jwtService: JwtService,
   ) {}
 
   async signUp(
-    createOrganizationDto: CreateOrganizationDto,
-    createSupporterDto: CreateSupporterDto,
+    createOrganizationInput: CreateOrganizationDto,
+    createSupporterInput: CreateSupporterDto,
   ): Promise<Supporter> {
-    const organization = await this.organizationRepository.createOrganization(
-      createOrganizationDto,
+    const organization = await this.organizationsService.createOrganization(
+      createOrganizationInput,
     );
-    return await this.supporterRepository.createSupporter(
-      createSupporterDto,
+    return await this.supportersService.createSupporter(
+      createSupporterInput,
       organization,
     );
   }
 
   async addSupporter(
-    createSupporterDto: CreateSupporterDto,
+    createSupporterInput: CreateSupporterDto,
     supporter: Supporter,
   ): Promise<Supporter> {
-    const organization = await this.organizationRepository.findOne(
+    const organization = await this.organizationsService.findById(
       supporter.organizationId,
     );
-    return await this.supporterRepository.createSupporter(
-      createSupporterDto,
+    return await this.supportersService.createSupporter(
+      createSupporterInput,
       organization,
     );
   }
 
-  // async addCustomer(
-  //   createFamilyDto: CreateFamilyDto,
-  //   createParentDto: CreateParentDto,
-  //   supporter: Supporter,
-  // ): Promise<Family> {
-  //   const family = await this.familyRepository.createFamily(createFamilyDto);
-  //   const separateParent = await this.parentRepository.createParent(createParentDto);
-  // }
+  async addCustomer(
+    createFamilyInput: CreateFamilyDto,
+    createSeparateParentInput: CreateParentDto,
+    createCohabitParentInput: CreateParentDto,
+    supporter: Supporter,
+  ): Promise<Family> {
+    const organization = await this.organizationsService.findById(
+      supporter.organizationId,
+    );
+    const family = await this.familiesService.createFamily(createFamilyInput);
+    const separateParent = await this.parentsService.createSeparateParent(
+      createSeparateParentInput,
+      family,
+      supporter,
+      organization,
+    );
+    const cohabitParent = await this.parentsService.createCohabitParent(
+      createCohabitParentInput,
+      family,
+      supporter,
+      organization,
+    );
+    family.parents = [...family.parents, separateParent, cohabitParent];
+
+    return family;
+  }
 
   async signIn(
     credentialsDto: CredentialsDto,
   ): Promise<{ accessToken: string }> {
     const { email, password } = credentialsDto;
-    const supporter = await this.supporterRepository.findOne({ email });
+    const supporter = await this.supportersService.findOne({ email });
 
     if (supporter && (await bcrypt.compare(password, supporter.password))) {
       const payload = {

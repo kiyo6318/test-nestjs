@@ -11,11 +11,11 @@ import { CreateOrganizationDto } from 'src/organizations/dto/create-organization
 import { AuthService } from './auth.service';
 import { GetUser } from './decorater/get-user.decorater';
 import { Role } from './decorater/role.decorater';
-import { CreateSupporterDto } from './dto/createSupporter.dto';
+import { CreateSupporterDto } from '../supporters/dto/createSupporter.dto';
 import { CredentialsDto } from './dto/credentials.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
-import { SupporterStatus } from './supporter-status.enum';
+import { SupporterStatus } from '../supporters/supporter-status.enum';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)

@@ -18,11 +18,11 @@ export class OrganizationsService {
     return found;
   }
 
-  async create(
-    createOrganizationDto: CreateOrganizationDto,
+  async createOrganization(
+    createOrganizationInput: CreateOrganizationDto,
   ): Promise<Organization> {
     return await this.organizationRepository.createOrganization(
-      createOrganizationDto,
+      createOrganizationInput,
     );
   }
 

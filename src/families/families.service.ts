@@ -14,14 +14,14 @@ export class FamiliesService {
   }
 
   async findById(id: string): Promise<Family> {
-    const found = await this.familyRepository.findOne(id);
-    if (!found) {
+    const family = await this.familyRepository.findOne(id);
+    if (!family) {
       throw new NotFoundException();
     }
-    return found;
+    return family;
   }
 
-  async create(createFamilyDto: CreateFamilyDto): Promise<Family> {
+  async createFamily(createFamilyDto: CreateFamilyDto): Promise<Family> {
     return await this.familyRepository.createFamily(createFamilyDto);
   }
 

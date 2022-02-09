@@ -5,16 +5,18 @@ import { Supporter } from 'src/entities/supporter.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateParentDto } from './dto/create-parent.dto';
 import * as bcrypt from 'bcrypt';
+import { ParentStatus } from 'src/auth/parent-status.enum';
 
 @EntityRepository(Parent)
 export class ParentRepository extends Repository<Parent> {
   async createParent(
-    createParentDto: CreateParentDto,
+    createParentInput: CreateParentDto,
+    status: ParentStatus,
     family: Family,
     supporter: Supporter,
     supportOrganization: Organization,
   ) {
-    const { email, parent_name, status, password } = createParentDto;
+    const { email, parent_name, password } = createParentInput;
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt);
     const parent = this.create({
