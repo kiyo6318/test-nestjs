@@ -27,6 +27,8 @@ export class ParentRepository extends Repository<Parent> {
       family,
       supporter,
       supportOrganization,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
 
     await this.save(parent);

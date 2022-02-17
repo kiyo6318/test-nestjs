@@ -4,17 +4,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { ParentsModule } from './parents/parents.module';
-import { SupportersService } from './supporters/supporters.service';
 import { SupportersModule } from './supporters/supporters.module';
+import { SupportersService } from './supporters/supporters.service';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
-    FamiliesModule,
     TypeOrmModule.forRoot(),
     AuthModule,
-    OrganizationsModule,
-    ParentsModule,
     SupportersModule,
+    FamiliesModule,
+    ParentsModule,
+    OrganizationsModule,
   ],
   controllers: [],
   providers: [],

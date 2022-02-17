@@ -16,6 +16,10 @@ import { CredentialsDto } from './dto/credentials.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { SupporterStatus } from '../supporters/supporter-status.enum';
+import { CreateParentDto } from 'src/parents/dto/create-parent.dto';
+import { Family } from 'src/entities/family.entity';
+import { CreateFamilyDto } from 'src/families/dto/create-family.dto';
+import { CreateCustomerDto } from './dto/createCustomer.dto';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -41,6 +45,16 @@ export class AuthController {
     @GetUser() supporter: Supporter,
   ): Promise<Supporter> {
     return await this.authService.addSupporter(createSupporterDto, supporter);
+  }
+
+  @Post('customers')
+  @Role(SupporterStatus.ADMIN, SupporterStatus.GENERAL)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async addCustomer(
+    @Body() createCustomerDto: CreateCustomerDto,
+    @GetUser() supporter: Supporter,
+  ): Promise<Family> {
+    return await this.authService.addCustomer(createCustomerDto, supporter);
   }
 
   @Post('signin')

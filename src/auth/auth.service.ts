@@ -13,13 +13,14 @@ import { SupportersService } from 'src/supporters/supporters.service';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { FamiliesService } from 'src/families/families.service';
 import { ParentsService } from 'src/parents/parents.service';
+import { CreateCustomerDto } from './dto/createCustomer.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private supportersService: SupportersService,
     private familiesService: FamiliesService,
     private parentsService: ParentsService,
-    private supportersService: SupportersService,
     private organizationsService: OrganizationsService,
     private jwtService: JwtService,
   ) {}
@@ -51,28 +52,47 @@ export class AuthService {
   }
 
   async addCustomer(
-    createFamilyInput: CreateFamilyDto,
-    createSeparateParentInput: CreateParentDto,
-    createCohabitParentInput: CreateParentDto,
+    createCustomerInput: CreateCustomerDto,
     supporter: Supporter,
   ): Promise<Family> {
+    const {
+      meetFrequency,
+      paymentDueDate,
+      possibleDateSelectDay,
+      separate_parent_email,
+      cohabit_parent_email,
+      separate_parent_name,
+      cohabit_parent_name,
+      password,
+    } = createCustomerInput;
     const organization = await this.organizationsService.findById(
       supporter.organizationId,
     );
-    const family = await this.familiesService.createFamily(createFamilyInput);
-    const separateParent = await this.parentsService.createSeparateParent(
-      createSeparateParentInput,
+    const family = await this.familiesService.createFamily({
+      meetFrequency,
+      paymentDueDate,
+      possibleDateSelectDay,
+    });
+    await this.parentsService.createSeparateParent(
+      {
+        parent_name: separate_parent_name,
+        email: separate_parent_email,
+        password: password,
+      },
       family,
       supporter,
       organization,
     );
-    const cohabitParent = await this.parentsService.createCohabitParent(
-      createCohabitParentInput,
+    await this.parentsService.createCohabitParent(
+      {
+        parent_name: cohabit_parent_name,
+        email: cohabit_parent_email,
+        password: password,
+      },
       family,
       supporter,
       organization,
     );
-    family.parents = [...family.parents, separateParent, cohabitParent];
 
     return family;
   }
@@ -81,7 +101,7 @@ export class AuthService {
     credentialsDto: CredentialsDto,
   ): Promise<{ accessToken: string }> {
     const { email, password } = credentialsDto;
-    const supporter = await this.supportersService.findOne({ email });
+    const supporter = await this.supportersService.findByEmail(email);
 
     if (supporter && (await bcrypt.compare(password, supporter.password))) {
       const payload = {

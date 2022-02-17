@@ -23,6 +23,14 @@ export class SupportersService {
     return supporter;
   }
 
+  async findByEmail(email: string): Promise<Supporter> {
+    const supporter = await this.supporterRepository.findOne({ email: email });
+    if (!supporter) {
+      throw new NotFoundException();
+    }
+    return supporter;
+  }
+
   async findByOrganization(organization: Organization): Promise<Supporter[]> {
     return await this.supporterRepository.find({
       organization: organization,

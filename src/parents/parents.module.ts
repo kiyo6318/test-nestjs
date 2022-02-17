@@ -6,8 +6,9 @@ import { ParentsController } from './parents.controller';
 import { ParentsService } from './parents.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ParentRepository]), AuthModule],
+  imports: [TypeOrmModule.forFeature([ParentRepository])],
   controllers: [ParentsController],
   providers: [ParentsService],
+  exports: [ParentsService],
 })
 export class ParentsModule {}

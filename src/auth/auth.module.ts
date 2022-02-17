@@ -1,26 +1,33 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { OrganizationRepository } from 'src/organizations/organization.repository';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { JwtStrategy } from './jwt.strategy';
-import { SupporterRepository } from '../supporters/supporter.repository';
-import { UserRepository } from './user.repository';
-import { SupportersService } from 'src/supporters/supporters.service';
-import { FamiliesService } from 'src/families/families.service';
-import { OrganizationsService } from 'src/organizations/organizations.service';
+import { SupportersModule } from 'src/supporters/supporters.module';
+import { FamiliesModule } from 'src/families/families.module';
+import { OrganizationsModule } from 'src/organizations/organizations.module';
+import { ParentsModule } from 'src/parents/parents.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { FamilyRepository } from 'src/families/family.repository';
+import { OrganizationRepository } from 'src/organizations/organization.repository';
+import { SupporterRepository } from 'src/supporters/supporter.repository';
+import { ParentRepository } from 'src/parents/parent.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       OrganizationRepository,
       SupporterRepository,
-      UserRepository,
+      FamilyRepository,
+      ParentRepository,
     ]),
+    SupportersModule,
+    FamiliesModule,
+    OrganizationsModule,
+    ParentsModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'secretKey123',
@@ -28,20 +35,9 @@ import { OrganizationsService } from 'src/organizations/organizations.service';
         expiresIn: 2592000,
       },
     }),
-    SupportersService,
-    FamiliesService,
-    OrganizationsService,
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    SupportersService,
-    FamiliesService,
-    OrganizationsService,
-    JwtStrategy,
-    JwtAuthGuard,
-    RolesGuard,
-  ],
-  exports: [JwtStrategy, JwtAuthGuard, RolesGuard],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
+  exports: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
 })
 export class AuthModule {}
